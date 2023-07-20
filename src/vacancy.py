@@ -1,15 +1,18 @@
 class Vacancy:
     all_vacancy = []
 
-    def __init__(self, title: str, link: str, salary: int | str, area: str, description: str) -> None:
-        self.__check(title, link, salary, area, description)
-
-        self.__title = title
-        self.__link = link
-        self.__salary = salary
-        self.__area = area
-        self.__description = description
-        self.all_vacancy.append(self)
+    def __init__(self, title: str, link: str, salary: str, area: str, description: str) -> None:
+        try:
+            self.__check(title, link, salary, area, description)
+        except ValueError as message:
+            print(message)
+        else:
+            self.__title = title
+            self.__link = link
+            self.__salary = salary
+            self.__area = area
+            self.__description = description
+            self.all_vacancy.append(self)
 
     def __str__(self):
         return f'Вакансия: {self.__title} ' \
@@ -48,25 +51,50 @@ class Vacancy:
             raise ValueError('Название вакансии должно быть непустой строкой')
         if not isinstance(link, str) or len(link.strip()) == 0:
             raise ValueError('Ссылка на вакансию должна быть непустой строкой')
-        if not isinstance(salary, int | float) and not 'null':
-            raise ValueError('Зарплата должна быть числом')
+        if not isinstance(salary, str):
+            raise ValueError('Зарплата должна быть строкой')
         if not isinstance(area, str) or len(area.strip()) == 0:
             raise ValueError('Название города должно быть непустой строкой')
         if not isinstance(description, str) or len(description.strip()) == 0:
             raise ValueError('Описание вакансии должно быть непустой строкой')
 
+    @staticmethod
+    def convert_salary(self_sal, other_sal):
+        # Разбиваем зарплату на отдельные элементы
+        self_salary_list = [i for i in self_sal.split() if i.isdigit()]
+        other_salary_list = [i for i in other_sal.split() if i.isdigit()]
+
+        # Проверяем зарплаты на наличие, если не указана то приравниваем 0
+        if not self_salary_list:
+            self_salary = 0
+        else:
+            self_salary = int(self_salary_list[0])
+        if not other_salary_list:
+            other_salary = 0
+        else:
+            other_salary = int(other_salary_list[0])
+        return self_salary, other_salary
+
     def __eq__(self, other):
-        return self.__salary == other.salary
+        self_salary, other_salary = self.convert_salary(self.salary, other.salary)
+        return self_salary == other_salary
 
     def __gt__(self, other):
-        return self.__salary > other.salary
+        self_salary, other_salary = self.convert_salary(self.salary, other.salary)
+        return self_salary > other_salary
 
     def __lt__(self, other):
-        return self.__salary < int(other.salary)
+        self_salary, other_salary = self.convert_salary(self.salary, other.salary)
+        return self_salary < other_salary
 
-# vacancy = Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>", "100 000-150 000 руб.", "Moscow",
-#                   "Требования: опыт работы от 3 лет...")
+    # @staticmethod
+    # def change_currency(currency):
+    #     normal_currencies = {'RUR': 'руб.', }
+    #     if currency in
 
-# # vacancy.title = '123'
-# vacancy.link = '234'
-# print(vacancy.link)
+# vacancy = Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>", "от 100000 до 150000 руб.", "Moscow",
+#                       "Требования: опыт работы от 3 лет...")
+#
+# # # vacancy.title = '123'
+# # vacancy.link = '234'
+# print(str(vacancy))
