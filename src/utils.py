@@ -94,12 +94,67 @@ def conv_sj_vacancies(vacancy_list: list) -> list:
     return converted_vacancies
 
 
+def sort_vacancies(vacancies: list) -> list:
+    """
+    Сортируем вакансии по зарплате
+    :param vacancies: list
+    :return: list
+    """
+    sorted_vacancies = sorted(vacancies, reverse=True)
+    return sorted_vacancies
 
 
+def get_top_vacancies(vacancies, top_n):
+    """Получение указанного топа вакансий"""
+    if top_n > len(vacancies):
+        return vacancies[:len(vacancies)]
+    else:
+        return vacancies[:top_n]
 
-# user_interaction()
-# vacancies = Vacancy.all_vacancy
-# vacancies.sort(reverse=True)
-# print(*vacancies, sep='\n')
-# print(conv_hh_vacancies(hh_api.get_vacancies('Python')))
 
+def convert_vacancy(vacancies_list: list) -> list:
+    """"Преобразование списка словарей в экземпляры класса"""
+    converted_list = []
+    for vacancy in vacancies_list:
+        title = vacancy['title']
+        link = vacancy['link']
+        salary = vacancy['salary']
+        area = vacancy['area']
+        description = vacancy['description']
+        converted_vacancy = Vacancy(title, link, salary, area, description)
+        converted_list.append(converted_vacancy)
+    return converted_list
+
+
+def get_search_query_and_top_n():
+    """
+    Вывели повторяющиеся запросы в отдельную функцию
+    :return: tuple
+    """
+    search_query = input('Введите поисковый запрос: ').lower().strip()
+    top_n = int(input("Введите количество вакансий для вывода в топ N по зарплате: "))
+    filter_word = input(
+        "Введите ключевое слово для фильтрации вакансий: ").lower().strip()
+    print('Ожидайте, идет загрузка... ')
+    return search_query, top_n, filter_word
+
+
+def process_vacancies(convert_vacancies, top_n):
+    """Обработка запросов пользователя, вывод информационных сообщений"""
+    user_sort = input('Отсортировать вакансии по зарплате? Да/Нет\n').lower().strip()
+    if user_sort == 'да':
+        sorted_vacancies = sort_vacancies(convert_vacancies)
+    else:
+        sorted_vacancies = convert_vacancies
+        print('Ну нет так нет')
+    user_top = int(input('1 - Вывести топ вакансий\n'
+                         '2 - Вывести все\n'))
+    if user_top == 1:
+        top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
+        print(*top_vacancies)
+    elif user_top == 2:
+        print(*sorted_vacancies)
+    else:
+        print('Такого варианта нет, вывожу всё')
+        print()
+        print(*sorted_vacancies)

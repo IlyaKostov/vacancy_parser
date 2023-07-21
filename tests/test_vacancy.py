@@ -22,6 +22,7 @@ def test_init(vacancy):
     Vacancy("Python Developer", "https://hh.ru/", "Не указана", "", "Требования:")
     Vacancy("Python Developer", "https://hh.ru/", "Не указана", "Moscow", "")
 
+
 def test_attribute_error_title(vacancy):
     with pytest.raises(AttributeError):
         vacancy.title = "Python"
@@ -60,10 +61,10 @@ def test_eq_gt_lt(vacancy):
 
 
 def test_vacancy_str(vacancy):
-    assert str(vacancy) == 'Вакансия: Python Developer Ссылка на вакансию: '\
+    assert str(vacancy) == '\nВакансия: Python Developer Ссылка на вакансию: '\
                            '<https://hh.ru/vacancy/123456>\n'\
                            'Зарплата: от 100000 до 150000 руб. Город: Moscow\n'\
-                           'Описание: Требования: опыт работы от 3 лет...'
+                           'Описание: Требования: опыт работы от 3 лет...\n'
 
 
 def test_vacancy_repr(vacancy):

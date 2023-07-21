@@ -15,8 +15,8 @@ class PlatformsAPI(ABC):
 
 class HeadHunterAPI(PlatformsAPI):
 
-    def __init__(self):
-        self.url = "https://api.hh.ru/vacancies"
+    URL = "https://api.hh.ru/vacancies"
+    MAX_PAGES = 5
 
     def get_vacancies(self, query: str):
         """
@@ -25,7 +25,7 @@ class HeadHunterAPI(PlatformsAPI):
         :return: list
         """
         vacancies_lst = []
-        for page in range(10):
+        for page in range(self.MAX_PAGES):
             params = {'per_page': 100,
                       'page': page,
                       'text': query,
@@ -33,8 +33,7 @@ class HeadHunterAPI(PlatformsAPI):
                       'order_by': "publication_time",
                       'area': [113, 16, 40],
                       }
-            response = requests.get(self.url, params=params)
-            vacancies = response.json()
+            vacancies = requests.get(self.URL, params=params).json()
             vacancies_lst.extend(vacancies['items'])
             if (vacancies['pages'] - page) <= 1:
                 break
@@ -43,7 +42,11 @@ class HeadHunterAPI(PlatformsAPI):
 
 
 class SuperJobAPI(PlatformsAPI):
-    x_api_app_id = os.getenv('SUPER_JOB_API')
+    MAX_PAGES = 5
+    URL = 'https://api.superjob.ru/2.0/vacancies/'
+
+    def __init__(self):
+        self.x_api_app_id = os.getenv('SUPER_JOB_API')
 
     def get_vacancies(self, query: str):
         """
@@ -52,20 +55,24 @@ class SuperJobAPI(PlatformsAPI):
         :return: list
         """
         vacancies_lst = []
-        for page in range(10):
+        for page in range(self.MAX_PAGES):
 
             headers = {
                        'X-Api-App-Id': self.x_api_app_id,
                        }
-            url = 'https://api.superjob.ru/2.0/vacancies/'
             params = {'keyword': query,
                       'page': page,
                       'count': 100,
+                      'order_direction': 'desc',
                       }
 
-            vacancies = requests.get(url, headers=headers, params=params).json()
-            vacancies_lst.extend(vacancies['objects'])
-            if not vacancies['more']:
-                break
-            time.sleep(0.5)
+            vacancies = requests.get(self.URL, headers=headers, params=params).json()
+            try:
+                vacancies_lst.extend(vacancies['objects'])
+            except KeyError:
+                return print(vacancies['error']['message'])
+            else:
+                if not vacancies['more']:
+                    break
+                time.sleep(0.5)
         return vacancies_lst
