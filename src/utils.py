@@ -1,12 +1,10 @@
 import re
 
 from src.api_classes import HeadHunterAPI, SuperJobAPI
-from src.json_saver import JSONSaver
 from src.vacancy import Vacancy
 
 hh_api = HeadHunterAPI()
 sj_api = SuperJobAPI()
-# json_saver = JSONSaver('../vacancies.json')
 
 
 def conv_hh_vacancies(vacancy_list: list) -> list:
