@@ -1,6 +1,8 @@
 import pytest
 
-from src.utils import conv_hh_vacancies, conv_sj_vacancies, format_hh_salary
+from src.utils import conv_hh_vacancies, conv_sj_vacancies, format_hh_salary, sort_vacancies, get_top_vacancies, \
+    convert_vacancy
+from src.vacancy import Vacancy
 
 
 @pytest.fixture
@@ -120,3 +122,38 @@ def test_format_hh_salary():
                              "to": 200000,
                              "currency": "BYR", }) == "от 180000 до 200000 бел. руб."
 
+
+def test_sort_vacancies(hh_vacancies_list):
+    vacancies = conv_hh_vacancies(hh_vacancies_list)
+    assert sort_vacancies(vacancies) == [Vacancy("Python разработчик", "https://hh.ru/vacancy/82299017",
+                                                 "от 180000 руб.", "Москва",
+                                                 "Наличие завершенных проектов в роли разработчика\nРазработка сервисов "
+                                                 "для middle-офиса компании – автоматизация ежедневных расчётов"),
+                                         Vacancy("Python разработчик", "https://hh.ru/vacancy/82299017",
+                                                 "до 180000 бел. руб.", "Москва",
+                                                 "Наличие завершенных проектов в роли разработчика\nРазработка сервисов "
+                                                 "для middle-офиса компании – автоматизация ежедневных расчётов"),
+                                         Vacancy("Python разработчик", "https://hh.ru/vacancy/82299017", "Не указана",
+                                                 "Москва", "Наличие завершенных проектов в роли разработчика\nРазработка "
+                                                           "сервисов для middle-офиса компании – автоматизация ежедневных расчётов")]
+
+
+def test_get_top_vacancies(hh_vacancies_list):
+    vacancies = conv_hh_vacancies(hh_vacancies_list)
+    top_n = 1
+    get_top_vacancies(vacancies, top_n)
+
+
+def test_convert_vacancy():
+    data_list = [
+    {
+        "title": "Software Developer Python",
+        "link": "https://hh.ru/vacancy/82595583",
+        "salary": "от 80000 до 200000 руб.",
+        "area": "Москва",
+        "description": "Английский на уровне с"
+    }
+    ]
+    assert convert_vacancy(data_list) == [Vacancy("Software Developer Python", "https://hh.ru/vacancy/82595583",
+                                                  "от 80000 до 200000 руб.", "Москва",
+                                                  "Английский на уровне с")]

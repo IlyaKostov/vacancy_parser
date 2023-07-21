@@ -1,5 +1,4 @@
 class Vacancy:
-    all_vacancy = []
 
     def __init__(self, title: str, link: str, salary: str, area: str, description: str) -> None:
         try:
@@ -12,14 +11,13 @@ class Vacancy:
             self.__salary = salary
             self.__area = area
             self.__description = description
-            self.all_vacancy.append(self)
 
     def __str__(self):
-        return f'Вакансия: {self.__title} ' \
+        return f'\nВакансия: {self.__title} ' \
                f'Ссылка на вакансию: {self.__link}\n' \
                f'Зарплата: {self.__salary} ' \
                f'Город: {self.__area}\n' \
-               f'Описание: {self.__description}'
+               f'Описание: {self.__description}\n'
 
     def __repr__(self):
         return f'{self.__class__.__name__}({self.__title}, {self.__link}, ' \
@@ -47,6 +45,7 @@ class Vacancy:
 
     @staticmethod
     def __check(title, link, salary, area, description):
+        """Проверка на валидность данных"""
         if not isinstance(title, str) or len(title.strip()) == 0:
             raise ValueError('Название вакансии должно быть непустой строкой')
         if not isinstance(link, str) or len(link.strip()) == 0:
@@ -59,12 +58,19 @@ class Vacancy:
             raise ValueError('Описание вакансии должно быть непустой строкой')
 
     @staticmethod
-    def convert_salary(self_sal, other_sal):
+    def convert_salary(self_sal: str, other_sal: str) -> tuple:
+        """
+        Конвертируем зарплату для возможности сравнения
+        :param self_sal: str
+        :param other_sal: str
+        :return: tuple
+        """
         # Разбиваем зарплату на отдельные элементы
         self_salary_list = [i for i in self_sal.split() if i.isdigit()]
         other_salary_list = [i for i in other_sal.split() if i.isdigit()]
 
         # Проверяем зарплаты на наличие, если не указана то приравниваем 0
+        # сравниваем по минимальной границе зарплаты
         if not self_salary_list:
             self_salary = 0
         else:
@@ -86,15 +92,3 @@ class Vacancy:
     def __lt__(self, other):
         self_salary, other_salary = self.convert_salary(self.salary, other.salary)
         return self_salary < other_salary
-
-    # @staticmethod
-    # def change_currency(currency):
-    #     normal_currencies = {'RUR': 'руб.', }
-    #     if currency in
-
-# vacancy = Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>", "от 100000 до 150000 руб.", "Moscow",
-#                       "Требования: опыт работы от 3 лет...")
-#
-# # # vacancy.title = '123'
-# # vacancy.link = '234'
-# print(str(vacancy))
