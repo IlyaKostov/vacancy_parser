@@ -67,7 +67,7 @@ class JSONSaver(AbstractVacancyDatabase):
         with open(self.filename, 'r') as file:
             data_list = json.load(file)
             for vacancy in data_list:
-                if vacancy.title != rem_vacancy.title:
+                if vacancy['title'] != rem_vacancy.title:
                     lines_to_keep.append(vacancy)
         with open(self.filename, 'w') as file:
             json.dump(lines_to_keep, file, ensure_ascii=False, indent=2)

@@ -21,3 +21,8 @@ def test_add_vacancy(json_saver):
 
 def test_get_vacancies_by_keyword(json_saver):
     json_saver.get_vacancies_by_keyword('опыт')
+
+
+def test_remove_vacancy(json_saver):
+    json_saver.remove_vacancy(Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>", "100 000-150 000 руб.",
+                                    "Москва", "Требования: опыт работы от 3 лет..."))
