@@ -36,21 +36,21 @@ class JSONSaver(AbstractVacancyDatabase):
     def get_vacancies_by_keyword(self, keyword: str) -> list:
         """Получаем нужные словари с вакансиями по ключевому слову"""
         vacancies = []
-        with open(self.filename, 'r') as file:
+        with open(self.filename, 'r', encoding='utf-8') as file:
             data_list = json.load(file)
             for vacancy in data_list:
                 if keyword in vacancy['description'].lower():
                     vacancies.append(vacancy)
         return vacancies
 
-    # def get_vacancies_by_area(self, area):
-    #     vacancies = []
-    #     with open(self.filename, 'r') as file:
-    #         data_list = json.load(file)
-    #         for vacancy in data_list:
-    #             if area in vacancy['area'].lower():
-    #                 vacancies.append(vacancy)
-    #     return vacancies
+    def get_vacancies_by_area(self, area):
+        vacancies = []
+        with open(self.filename, 'r', encoding='utf-8') as file:
+            data_list = json.load(file)
+            for vacancy in data_list:
+                if area in vacancy['area'].lower():
+                    vacancies.append(vacancy)
+        return vacancies
 
     # def get_vacancies_by_salary(self, salary):
     #     vacancies = []
@@ -64,10 +64,14 @@ class JSONSaver(AbstractVacancyDatabase):
     def remove_vacancy(self, rem_vacancy):
         """Удаляем вакансию по названию"""
         lines_to_keep = []
-        with open(self.filename, 'r') as file:
-            data_list = json.load(file)
-            for vacancy in data_list:
-                if vacancy['title'] != rem_vacancy.title:
-                    lines_to_keep.append(vacancy)
-        with open(self.filename, 'w') as file:
-            json.dump(lines_to_keep, file, ensure_ascii=False, indent=2)
+        if rem_vacancy != 'all':
+            with open(self.filename, 'r', encoding='utf-8') as file:
+                data_list = json.load(file)
+                for vacancy in data_list:
+                    if rem_vacancy not in vacancy['title']:
+                        lines_to_keep.append(vacancy)
+            with open(self.filename, 'w', encoding='utf-8') as file:
+                json.dump(lines_to_keep, file, ensure_ascii=False, indent=2)
+        else:
+            with open(self.filename, 'w', encoding='utf-8') as file:
+                json.dump([], file, ensure_ascii=False, indent=2)

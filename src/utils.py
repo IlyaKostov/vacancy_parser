@@ -1,10 +1,12 @@
 import re
 
 from src.api_classes import HeadHunterAPI, SuperJobAPI
+from src.json_saver import JSONSaver
 from src.vacancy import Vacancy
 
 hh_api = HeadHunterAPI()
 sj_api = SuperJobAPI()
+json_saver = JSONSaver('vacancies.json')
 
 
 def conv_hh_vacancies(vacancy_list: list) -> list:
@@ -141,6 +143,7 @@ def get_search_query_and_top_n():
 
 def process_vacancies(convert_vacancies, top_n):
     """Обработка запросов пользователя, вывод информационных сообщений"""
+
     user_sort = input('Отсортировать вакансии по зарплате? Да/Нет\n').lower().strip()
     if user_sort == 'да':
         sorted_vacancies = sort_vacancies(convert_vacancies)
@@ -158,3 +161,18 @@ def process_vacancies(convert_vacancies, top_n):
         print('Такого варианта нет, вывожу всё')
         print()
         print(*sorted_vacancies)
+
+
+def process_converted_and_filtered(convert_vacancies: list, filter_word: str) -> list:
+    """Конвертация вакансий в соответствии с запросом пользователя"""
+    json_saver.add_vacancy(convert_vacancies)
+    vacancies_list = json_saver.get_vacancies_by_keyword(filter_word)
+    filtered_vacancies = convert_vacancy(vacancies_list)
+    return filtered_vacancies
+
+
+def choose_vacancies_from_json(filtered_vacancies: list) -> list:
+    print('Укажите нужный город, если не важно, оставьте поле пустым')
+    user_choice = input()
+    filtered_area_vacancies = json_saver.get_vacancies_by_area(user_choice)
+    return filtered_area_vacancies
